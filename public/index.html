@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Простий блог на Node.js, Express та React</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React is connected from CDN for a simple laboratory project. -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <script>
+    const { useEffect, useState } = React;
+
+    function ArticleCard({ article }) {
+      return React.createElement('article', { className: 'article-card' },
+        React.createElement('div', { className: 'article-header' },
+          React.createElement('span', { className: 'category' }, article.category),
+          React.createElement('span', { className: 'date' }, article.date)
+        ),
+        React.createElement('h2', null, article.title),
+        React.createElement('p', { className: 'article-text' }, article.text),
+        React.createElement('p', { className: 'author' }, 'Автор: ' + article.author)
+      );
+    }
+
+    function App() {
+      const [articles, setArticles] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState('');
+
+      useEffect(() => {
+        fetch('/api/articles')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Не вдалося завантажити статті');
+            }
+            return response.json();
+          })
+          .then(data => {
+            setArticles(data);
+            setLoading(false);
+          })
+          .catch(err => {
+            setError(err.message);
+            setLoading(false);
+          });
+      }, []);
+
+      if (loading) {
+        return React.createElement('main', { className: 'container' },
+          React.createElement('p', { className: 'status' }, 'Завантаження статей...')
+        );
+      }
+
+      if (error) {
+        return React.createElement('main', { className: 'container' },
+          React.createElement('p', { className: 'error' }, error)
+        );
+      }
+
+      return React.createElement('main', { className: 'container' },
+        React.createElement('section', { className: 'hero' },
+          React.createElement('p', { className: 'subtitle' }, 'Лабораторна робота №2'),
+          React.createElement('h1', null, 'Простий блог'),
+          React.createElement('p', { className: 'description' },
+            'Сторінка завантажує список статей із серверного маршруту Express та відображає їх за допомогою React.'
+          )
+        ),
+        React.createElement('section', { className: 'articles' },
+          articles.map(article => React.createElement(ArticleCard, {
+            key: article.id,
+            article: article
+          }))
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(App));
+  </script>
+</body>
+</html>

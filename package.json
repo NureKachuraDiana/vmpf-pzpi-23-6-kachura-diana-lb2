@@ -1,0 +1,15 @@
+{
+  "name": "lb2-express-react-blog",
+  "version": "1.0.0",
+  "description": "Лабораторна робота №2: простий блог на Node.js, Express та React",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "author": "Качура Діана",
+  "license": "ISC"
+}
